@@ -1008,8 +1008,8 @@ select:focus {
 }
 .header .mainmenu-area.mainmenu-area2 .navbar #main_menu .navbar-brand img.l2 {
   height: 140px;
-  width: 250px;
-  max-width: 250px;
+  width: 300px;
+  max-width: 300px;
   position: absolute;
   bottom: -42px;
 }

@@ -171,7 +171,7 @@ const Header = () => {
                                     </li>
                                     
                                  </ul>
-                                 <a className="navbar-brand" href="/" style={{ position: 'sticky', left: '50%', transform: 'translate(-50%, 0)' }}>
+                                 <a className="navbar-brand" href="/" style={{ position: 'sticky', left: '50%', transform: 'translate(-50%, 0)', display: 'flex', justifyContent: 'center' }}>
                                     <img className="l2" src="../assets/images/logo2.png" alt="" />
                                  </a>
                                  <ul className="navbar-nav ml-auto">
