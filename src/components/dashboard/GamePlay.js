@@ -28,7 +28,7 @@ const GamePlay = () => {
                   <div className="col-xl-3 col-lg-4 col-md-6">
                      <div className="single-play">
                         <div className="image">
-                           <img src="assets/images/game-play/1.png" alt="" />
+                           <img src="assets/images/passToken/passToken1.png" alt="" />
                         </div>
                         <div className="contant">
                            <a href="#" className="mybtn1">EARN</a>
@@ -67,7 +67,7 @@ const GamePlay = () => {
                   <div className="col-xl-3 col-lg-4 col-md-6">
                      <div className="single-play">
                         <div className="image">
-                           <img src="assets/images/game-play/2.png" alt="" />
+                           <img src="assets/images/passToken/passToken1.png" alt="" />
                         </div>
                         <div className="contant">
                            <a href="#" className="mybtn1">EARN</a>
@@ -106,7 +106,7 @@ const GamePlay = () => {
                   <div className="col-xl-3 col-lg-4 col-md-6">
                      <div className="single-play">
                         <div className="image">
-                           <img src="assets/images/game-play/3.png" alt="" />
+                           <img src="assets/images/passToken/passToken1.png" alt="" />
                         </div>
                         <div className="contant">
                            <a href="#" className="mybtn1">EARN</a>
@@ -145,7 +145,7 @@ const GamePlay = () => {
                   <div className="col-xl-3 col-lg-4 col-md-6">
                      <div className="single-play">
                         <div className="image">
-                           <img src="assets/images/game-play/4.png" alt="" />
+                           <img src="assets/images/passToken/passToken1.png" alt="" />
                         </div>
                         <div className="contant">
                            <a href="#" className="mybtn1">EARN</a>
