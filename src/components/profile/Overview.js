@@ -8,6 +8,7 @@ import Footer from '../include/Footer';
 
 const Overview = () => {
     const { isAuthenticated, authFlag}= useSelector(state => state.auth);
+    const { avatar, register_type } = useSelector(state => state.auth.user);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -33,6 +34,19 @@ const Overview = () => {
     if (!isAuthenticated && isAuthenticated != null) {
         return <Navigate to="/login" />
     }
+
+    let logUserImage;
+    if (isAuthenticated) {
+        if (register_type == 'NORMAL_SIGNUP') {
+            logUserImage = (<img src={`../assets/images/users/${avatar}`} width="159px" height="159px" alt="" style={{ borderRadius: '50%' }} />)
+        } else {
+            logUserImage = (<img src={`${avatar}`} width="44px" height="44px" alt="" style={{ borderRadius: '50%' }} />)
+        }
+        
+    } else {
+        logUserImage = (<></>)
+    }
+
     return (
         <Fragment>
             <ToastContainer />
@@ -109,7 +123,7 @@ const Overview = () => {
                             <div className="gamer-profile-top-inner">
                                 <div className="profile-photo">
                                     <div className="img">
-                                        <img src="../assets/images/gamer/gamer.png" alt="" />
+                                        {logUserImage}
                                     </div>
                                     <div className="mybadge">
                                         <img src="../assets/images/gamer/badge.png" alt="" />
