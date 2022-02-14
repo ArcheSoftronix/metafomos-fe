@@ -30,8 +30,7 @@ const Overview = () => {
         } 
       }, []);
 
-    
-    if (!isAuthenticated) {
+    if (!isAuthenticated && isAuthenticated != null) {
         return <Navigate to="/login" />
     }
     return (
