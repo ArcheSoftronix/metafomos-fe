@@ -13,9 +13,10 @@ const initialState = {
         firstname: '',
         lastname: '',
         mobilenumber: '',
+        register_type: '',
         avatar: '',
         wallet: '',
-        date_form: ''
+        date_form: '',
     },
 };
   

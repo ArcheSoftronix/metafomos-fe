@@ -17,6 +17,7 @@ const Header = () => {
    const navigate = useNavigate();
    const blockchain = useSelector(state => state.blockchain);
    const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+   const { avatar, register_type } = useSelector(state => state.auth.user);
    
    const checkNet = async () => {
       if (!isAuthenticated) {
@@ -48,6 +49,18 @@ const Header = () => {
 
    const onLogOut = () => {
       dispatch(logout())
+   }
+
+   let logUserImage;
+   if (isAuthenticated) {
+      if (register_type == 'NORMAL_SIGNUP') {
+         logUserImage = (<img src={`../assets/images/users/${avatar}`} width="44px" height="44px" alt="" style={{ borderRadius: '50%' }} />)
+      } else {
+         logUserImage = (<img src={`${avatar}`} width="44px" height="44px" alt="" style={{ borderRadius: '50%' }} />)
+      }
+      
+   } else {
+      logUserImage = (<></>)
    }
 
    return (
@@ -196,12 +209,7 @@ const Header = () => {
                                        <div className="user-info-menu-area">
                                           <div className="right-area" style={{ cursor: 'pointer' }}>
                                              <div className="icon">
-                                                { isAuthenticated ? (
-                                                   <img src="../assets/images/menu-user.png" alt="" />
-                                                ) : (
-                                                   <></>
-                                                ) }
-                                                
+                                                {logUserImage}
                                              </div>
                                              <div className="dp-menu">
                                                 { isAuthenticated ? (
