@@ -1,3 +1,4 @@
+import axios from 'axios';
 import api from '../utils/api';
 import { toast } from 'react-toastify';
 
@@ -49,6 +50,16 @@ export const register = formData => async dispatch => {
     });
   }
 };
+
+// Get Facebook access token from GRAPH API
+export const getAccessTokenFromFb = () => async dispatch => {
+  try {
+    const res = await axios.get(`https://graph.facebook.com/oauth/access_token?client_id=680493446295538&client_secret=eafd897d70c305694abbc5b95e4e630a&grant_type=client_credentials`)
+
+  } catch (err) {
+
+  }
+}
 
 // Social Media User Register
 export const socialMediaSignUp = formData => async dispatch => {

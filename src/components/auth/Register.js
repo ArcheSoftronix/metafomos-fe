@@ -2,19 +2,46 @@ import React, { Fragment, useState, useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { GoogleLogin } from 'react-google-login';
 import FacebookLogin from 'react-facebook-login';
+import InstagramEmbed from 'react-instagram-embed';
 import { register, socialMediaSignUp } from '../../actions/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
+import Modal from 'react-awesome-modal';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Register = () => {
-
     useEffect(() => {
         const body = document.querySelector('#root');
         body.scrollIntoView({
             behavior: 'smooth'
         }, 500)
-      }, []);
+    }, []);
+
+    useEffect(() => {
+        window.twttr.events.bind(
+            'follow',
+            function (intentEvent) {
+                if (!intentEvent) return;
+                var label = intentEvent.data.user_id + " (" + intentEvent.data.screen_name + ")";
+                setFollowSocialMediaStep('TWITTER_TWEET_RETWEET')
+                console.log(label)
+            }
+        );
+
+        window.twttr.events.bind(
+            'retweet',
+            function(intentEvent) {
+                if (!intentEvent) return;
+                var retweetedTweetId = intentEvent.data.source_tweet_id;
+
+                // dispatch(register(data));
+
+                setFollowSocialMediaStep('JOIN_INSTAGRAM')
+                console.log(retweetedTweetId)
+            }
+        );
+    
+    })
 
     const dispatch = useDispatch();
     const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
@@ -23,8 +50,11 @@ const Register = () => {
         password: '',
         password_confirm: '',
     });
+    
+    const [showModal, setShowModal] = useState(false);
 
     const { email, password, password_confirm } = formData;
+    const [followSocialMediaStep, setFollowSocialMediaStep] = useState('TWITTER_FOLLOW'); // JOIN_FACEBOOK JOIN_DISCORD JOIN_INSTAGRAM TWITTER_FOLLOW | TWITTER_TWEET_RETWEET
 
     const onCreateAccount = () => {
         if (password !== password_confirm) {
@@ -42,7 +72,9 @@ const Register = () => {
                 email: email, 
                 password: password
             }
-            dispatch(register(data));
+            dispatch(register(data)).then((res) => {
+                console.log('res >>>', res)
+            });
         }
     }
 
@@ -77,7 +109,18 @@ const Register = () => {
     if (isAuthenticated) {
         return <Navigate to="/profile/overview" />
     }
+    const onInstagramEmbedFail = (e) => {
+        console.log('onInstagramEmbedFail >> ', e)
+    }
 
+    /*  window.twttr.events.bind(
+        'click',
+        function (ev) {
+            console.log(ev);
+        }
+    ); */
+
+    
     return (
         <Fragment>
             <ToastContainer />
@@ -139,6 +182,63 @@ const Register = () => {
                     You already have an account? &nbsp;<Link to="/login"><span>Connect now</span></Link>
                     </div>
                 </div>
+                <Modal visible={showModal} effect="fadeInUp">
+                    {followSocialMediaStep == 'TWITTER_FOLLOW' ? 
+                        <div className="container p-5">
+                            <h6 className="text-dark">Follow Twitter Page To Continue</h6>
+                            
+                            <a href="'https://twitter.com/MetaFomos?ref_src=twsrc%5Etfw'" className="twitter-follow-button" data-show-count="true" data-size="large" id="tweetFollow">Follow @MetaFomos</a>
+                        </div>
+                    : null }
+
+                    {followSocialMediaStep == 'TWITTER_TWEET_RETWEET' ? 
+                        <div className="container p-5">
+                            <h6 className="text-dark">Retweet Our Tweet To Continue</h6>
+                            <a href="https://twitter.com/intent/retweet?tweet_id=463440424141459456&via=MetaFomos&hashtags=MetaFomos" className="btn btn-primary rounded-pill"  id="tweetRetweet">  <i class="fa fa-twitter"></i> Retweet</a>
+                        </div>
+                    : null }
+                    
+                    {followSocialMediaStep == 'JOIN_INSTAGRAM' ? 
+                        <div className="container p-5">
+                            <h6 className="text-dark">Join Us On Instagram To Continue</h6>
+                            {/* 'https://instagr.am/p/Zw9o4/' // https://www.instagram.com/archedevs/ */}
+                            <InstagramEmbed
+                                url= 'https://www.instagram.com/archedevs'
+                                clientAccessToken="680493446295538|eafd897d70c305694abbc5b95e4e630a"
+                                maxWidth={320}
+                                hideCaption={false}
+                                containerTagName='div'
+                                protocol=''
+                                injectScript
+                                onLoading={() => {}}
+                                onSuccess={() => {}}
+                                onFailure={() => { onInstagramEmbedFail() }}
+                                />
+                        </div>
+                    : null }
+
+                    { followSocialMediaStep == 'JOIN_DISCORD' ? 
+                        <div className="container p-5">
+                            <h6 className="text-dark">Connect Us With Discord</h6>
+                            <iframe src="https://discord.com/widget?id=944198467440500757&theme=dark" width="350" height="300" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+                        </div>
+                    : null }
+
+                    { followSocialMediaStep == 'JOIN_FACEBOOK' ? 
+                        <div className="container p-5">
+                            <h6 className="text-dark">Follow Us On Facebook To Continue</h6>
+                            <div className="fb-page" data-href="https://www.facebook.com/metafomos" data-tabs="timeline" data-width="300px" data-height="" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
+                                <blockquote cite="https://www.facebook.com/metafomos" className="fb-xfbml-parse-ignore">
+                                    <a href="https://www.facebook.com/metafomos">MetaFomos</a>
+                                </blockquote>
+                            </div>
+                        </div>
+                    : null }
+
+
+                    {/* { followSocialMediaStep == 'JOIN_REDDIT' ?  :  } */}
+                
+                </Modal>
             </div>
         </Fragment>
     )
