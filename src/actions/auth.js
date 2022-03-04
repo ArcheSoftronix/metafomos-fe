@@ -6,7 +6,6 @@ import { toast } from 'react-toastify';
 export const loadUser = () => async dispatch => {
   try {
     const res = await api.get('/auth');
-
     dispatch({
       type: 'USER_LOADED',
       payload: res.data
@@ -65,11 +64,14 @@ export const getAccessTokenFromFb = () => async dispatch => {
 export const socialMediaSignUp = formData => async dispatch => {
   try {
     const res = await api.post('/auth/sm-signup', formData);
-
     dispatch({
       type: 'SM_REGISTER_SUCCESS',
       payload: res.data
     });
+    dispatch({
+      type: 'IS_USER_LOGGEDIN_FIRST_TIME',
+      payload: res.data.is_logged_in_first_time
+    })
     dispatch(loadUser());
     
   } catch (err) {

@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect, useRef } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { GoogleLogin } from 'react-google-login';
 import FacebookLogin from 'react-facebook-login';
@@ -10,6 +10,7 @@ import Modal from 'react-awesome-modal';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Register = () => {
+    const auth = useSelector(state => state.auth)
     useEffect(() => {
         const body = document.querySelector('#root');
         body.scrollIntoView({
@@ -41,10 +42,17 @@ const Register = () => {
             }
         );
     
-    })
+    },[])
+    
+    useEffect(() => {
+        if(auth.is_logged_in_first_time){
+            setShowModal(true)
+        }
+    },[auth])
 
     const dispatch = useDispatch();
     const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+    const isLoggedInFirstTime = useSelector(state => state.auth.is_logged_in_first_time);
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -54,7 +62,17 @@ const Register = () => {
     const [showModal, setShowModal] = useState(false);
 
     const { email, password, password_confirm } = formData;
-    const [followSocialMediaStep, setFollowSocialMediaStep] = useState('TWITTER_FOLLOW'); // JOIN_FACEBOOK JOIN_DISCORD JOIN_INSTAGRAM TWITTER_FOLLOW | TWITTER_TWEET_RETWEET
+    const [followSocialMediaStep, setFollowSocialMediaStep] = useState('TWITTER_FOLLOW'); // JOIN_FACEBOOK | JOIN_DISCORD | JOIN_INSTAGRAM | TWITTER_FOLLOW | TWITTER_TWEET_RETWEET
+
+    const setContentRef = useRef(null);
+    function handleIframe() {
+        
+        const iframeItem = setContentRef.current;
+        // const discordBtn = iframeItem.contentWindow.document.getElementsByTagName("a");
+        // a tag class name widgetBtnConnect-2fvtGa
+        
+        // console.log('discordBtn >>> ', iframeItem.contentWindow.window.document)
+    }
 
     const onCreateAccount = () => {
         if (password !== password_confirm) {
@@ -72,9 +90,7 @@ const Register = () => {
                 email: email, 
                 password: password
             }
-            dispatch(register(data)).then((res) => {
-                console.log('res >>>', res)
-            });
+            dispatch(register(data))
         }
     }
 
@@ -84,7 +100,6 @@ const Register = () => {
     
     /* GOOGLE SIGNUP */
     const responseGOAuthSignup = (authResponse) => {
-        // console.log('GL authResponse >> ', authResponse)
         if (!authResponse.error) {
             let body = {
                 ...authResponse,
@@ -106,20 +121,12 @@ const Register = () => {
         }
     }
 
-    if (isAuthenticated) {
+    if (isAuthenticated && !isLoggedInFirstTime) {
         return <Navigate to="/profile/overview" />
     }
     const onInstagramEmbedFail = (e) => {
         console.log('onInstagramEmbedFail >> ', e)
     }
-
-    /*  window.twttr.events.bind(
-        'click',
-        function (ev) {
-            console.log(ev);
-        }
-    ); */
-
     
     return (
         <Fragment>
@@ -194,17 +201,20 @@ const Register = () => {
                     {followSocialMediaStep == 'TWITTER_TWEET_RETWEET' ? 
                         <div className="container p-5">
                             <h6 className="text-dark">Retweet Our Tweet To Continue</h6>
-                            <a href="https://twitter.com/intent/retweet?tweet_id=463440424141459456&via=MetaFomos&hashtags=MetaFomos" className="btn btn-primary rounded-pill"  id="tweetRetweet">  <i class="fa fa-twitter"></i> Retweet</a>
+                            <a href="https://twitter.com/intent/retweet?tweet_id=463440424141459456&via=MetaFomos&hashtags=MetaFomos" style={{position: 'relative', height: '20px', boxSizing: 'border-box', padding: '1px 12px 1px 12px', backgroundColor: '#1d9bf0', color: '#fff', borderRadius: '9999px', fontWeight: '500', cursor: 'pointer'}} id="tweetRetweet">  <i class="fa fa-twitter"></i> Retweet</a>
                         </div>
                     : null }
                     
                     {followSocialMediaStep == 'JOIN_INSTAGRAM' ? 
                         <div className="container p-5">
                             <h6 className="text-dark">Join Us On Instagram To Continue</h6>
-                            {/* 'https://instagr.am/p/Zw9o4/' // https://www.instagram.com/archedevs/ */}
+                            {/* Arche "680493446295538|eafd897d70c305694abbc5b95e4e630a"
+                                https://www.instagram.com/archedevs
+                            */}
+                            
                             <InstagramEmbed
-                                url= 'https://www.instagram.com/archedevs'
-                                clientAccessToken="680493446295538|eafd897d70c305694abbc5b95e4e630a"
+                                url= 'https://www.instagram.com/metafomos'
+                                clientAccessToken="637258717349315|e15e7baaff0a432ad4acb78734ef3bfc"
                                 maxWidth={320}
                                 hideCaption={false}
                                 containerTagName='div'
@@ -220,14 +230,19 @@ const Register = () => {
                     { followSocialMediaStep == 'JOIN_DISCORD' ? 
                         <div className="container p-5">
                             <h6 className="text-dark">Connect Us With Discord</h6>
-                            <iframe src="https://discord.com/widget?id=944198467440500757&theme=dark" width="350" height="300" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+                            {/* 
+                                IN BELLOW DISCORD WIDGET id=944198467440500757 IS FOR TESTING CREATE AND  REPLACE YOUR DISCORD SERVER ID HERE!
+                            */}
+                            <iframe ref={setContentRef} src="https://discord.com/widget?id=944198467440500757&theme=dark" width="350" height="300" allowtransparency="true" frameBorder="0" sandbox="allow-top-navigation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" onLoad={handleIframe} referrerPolicy="origin same-origin origin-when-cross-origin no-referrer-when-downgrade"></iframe>
                         </div>
                     : null }
 
                     { followSocialMediaStep == 'JOIN_FACEBOOK' ? 
                         <div className="container p-5">
-                            <h6 className="text-dark">Follow Us On Facebook To Continue</h6>
-                            <div className="fb-page" data-href="https://www.facebook.com/metafomos" data-tabs="timeline" data-width="300px" data-height="" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
+                            <h6 className="text-dark">Follow Us On Facebook Or Reddit To Continue</h6>
+                            
+                            <div class="sharethis-inline-follow-buttons mb-3"></div>
+                            <div className="fb-page" data-href="https://www.facebook.com/metafomos" data-tabs="timeline" data-width="300px" data-height="250px" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
                                 <blockquote cite="https://www.facebook.com/metafomos" className="fb-xfbml-parse-ignore">
                                     <a href="https://www.facebook.com/metafomos">MetaFomos</a>
                                 </blockquote>
@@ -236,7 +251,9 @@ const Register = () => {
                     : null }
 
 
-                    {/* { followSocialMediaStep == 'JOIN_REDDIT' ?  :  } */}
+                    {/* { followSocialMediaStep == 'JOIN_REDDIT' ? 
+                        <div class="sharethis-inline-follow-buttons"></div>
+                    : null } */}
                 
                 </Modal>
             </div>

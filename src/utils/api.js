@@ -3,7 +3,7 @@ import axios from 'axios';
 // import { GET_NEWS } from '../actions/types';
 
 const api = axios.create({
-  baseURL: 'https://metafomos-backend.herokuapp.com/api',
+  baseURL: 'http://localhost:5000/api', //https://metafomos-backend.herokuapp.com
   headers: {
     'Content-Type': 'application/json'
   }

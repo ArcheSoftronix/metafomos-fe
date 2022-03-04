@@ -4,6 +4,7 @@ const initialState = {
     isAuthenticated: null,
     loading: false,
     authFlag: false,
+    is_logged_in_first_time: false,
     user: {
         _id: '',
         email: '',
@@ -47,6 +48,12 @@ const initialState = {
           loading: false,
           authFlag: true,
         };
+      case 'IS_USER_LOGGEDIN_FIRST_TIME': {
+        return {
+          ...state,
+          is_logged_in_first_time: payload
+        };
+      }
       case 'LOGIN_SUCCESS':
         return {
           ...state,
