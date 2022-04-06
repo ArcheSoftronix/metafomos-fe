@@ -30,6 +30,7 @@ const initialState = {
           ...state,
           isAuthenticated: true,
           loading: false,
+          is_logged_in_first_time: payload.is_logged_in_first_time,
           user: payload
         };
       case 'REGISTER_SUCCESS':
@@ -68,6 +69,7 @@ const initialState = {
         return {
           ...state,
           token: null,
+          is_logged_in_first_time: false,
           isAuthenticated: false,
           loading: false,
           user: {},

@@ -36,9 +36,6 @@ function App() {
       {/* <Header /> */}
       <Router>
           <Header />
-            {/* <script src="https://apis.google.com/js/platform.js" async defer></script>
-            <meta name="google-signin-client_id" content="860538264827-8qf2qpp6mqki8asmbpsroulb9u16un61.apps.googleusercontent.com"></meta> */}
-  
           <Routes>
             <Route exact path="/" element={ <Dashboard /> } />
             <Route exact path="/login" element={ <Login /> } />

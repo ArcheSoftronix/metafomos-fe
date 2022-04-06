@@ -3,7 +3,7 @@ import { Link, Navigate } from 'react-router-dom';
 import { GoogleLogin } from 'react-google-login';
 import FacebookLogin from 'react-facebook-login';
 import InstagramEmbed from 'react-instagram-embed';
-import { register, socialMediaSignUp } from '../../actions/auth';
+import { register, socialMediaSignUp, generateTokenTwo } from '../../actions/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
 import Modal from 'react-awesome-modal';
@@ -24,8 +24,9 @@ const Register = () => {
             function (intentEvent) {
                 if (!intentEvent) return;
                 var label = intentEvent.data.user_id + " (" + intentEvent.data.screen_name + ")";
+
                 setFollowSocialMediaStep('TWITTER_TWEET_RETWEET')
-                console.log(label)
+                console.log('Twitter User : ', label)
             }
         );
 
@@ -35,18 +36,17 @@ const Register = () => {
                 if (!intentEvent) return;
                 var retweetedTweetId = intentEvent.data.source_tweet_id;
 
-                // dispatch(register(data));
-
                 setFollowSocialMediaStep('JOIN_INSTAGRAM')
-                console.log(retweetedTweetId)
+                console.log('retweetedTweetId : ', retweetedTweetId)
             }
         );
-    
     },[])
     
     useEffect(() => {
         if(auth.is_logged_in_first_time){
             setShowModal(true)
+        } else {
+            setShowModal(false)
         }
     },[auth])
 
@@ -62,7 +62,7 @@ const Register = () => {
     const [showModal, setShowModal] = useState(false);
 
     const { email, password, password_confirm } = formData;
-    const [followSocialMediaStep, setFollowSocialMediaStep] = useState('TWITTER_FOLLOW'); // JOIN_FACEBOOK | JOIN_DISCORD | JOIN_INSTAGRAM | TWITTER_FOLLOW | TWITTER_TWEET_RETWEET
+    const [followSocialMediaStep, setFollowSocialMediaStep] = useState('JOIN_FACEBOOK'); // JOIN_FACEBOOK | JOIN_DISCORD | JOIN_INSTAGRAM | TWITTER_FOLLOW | TWITTER_TWEET_RETWEET
 
     const setContentRef = useRef(null);
     function handleIframe() {
@@ -120,12 +120,22 @@ const Register = () => {
             dispatch(socialMediaSignUp(body));
         }
     }
-
+    
     if (isAuthenticated && !isLoggedInFirstTime) {
         return <Navigate to="/profile/overview" />
     }
+    
     const onInstagramEmbedFail = (e) => {
         console.log('onInstagramEmbedFail >> ', e)
+    }
+    
+    const onInstagramEmbedSuccess = (e) => {
+        console.log('onInstagramEmbedSuccess >> ', e)
+    }
+
+    const proceedWithReddit = (e) => {
+        console.log('proceedWithReddit >>>> ', e)
+        dispatch(generateTokenTwo());
     }
     
     return (
@@ -170,14 +180,14 @@ const Register = () => {
                     <button className='panel3' onClick={() => onCreateAccount()}><span>Create Account</span></button>
                     <div className='login-plug'>
                         <GoogleLogin className='g-login'
-                            clientId="860538264827-8qf2qpp6mqki8asmbpsroulb9u16un61.apps.googleusercontent.com"
+                            clientId="<CLIENT ID>"
                             buttonText="Signup"
                             onSuccess={responseGOAuthSignup}
                             onFailure={responseGOAuthSignup}
                             cookiePolicy={'single_host_origin'}
                         />
                         <FacebookLogin cssClass="g-login p-3 pr-5 bg-white text-secondary w-100 font-weight-light"
-                            appId="984455555809462"
+                            appId="<APP ID>"
                             textButton="Signup"
                             fields="name,email,picture"
                             callback={responseFOAuthSignup}
@@ -201,7 +211,7 @@ const Register = () => {
                     {followSocialMediaStep == 'TWITTER_TWEET_RETWEET' ? 
                         <div className="container p-5">
                             <h6 className="text-dark">Retweet Our Tweet To Continue</h6>
-                            <a href="https://twitter.com/intent/retweet?tweet_id=463440424141459456&via=MetaFomos&hashtags=MetaFomos" style={{position: 'relative', height: '20px', boxSizing: 'border-box', padding: '1px 12px 1px 12px', backgroundColor: '#1d9bf0', color: '#fff', borderRadius: '9999px', fontWeight: '500', cursor: 'pointer'}} id="tweetRetweet">  <i class="fa fa-twitter"></i> Retweet</a>
+                            <a href="https://twitter.com/intent/retweet?tweet_id=463440424141459456&via=MetaFomos&hashtags=MetaFomos" style={{fontSize:'14px', fontStyle: 'normal', fontFamily: '"Helvetica Neue", Arial, sans-serif', position: 'relative', height: '20px', boxSizing: 'border-box', padding: '6px 12px 6px 12px', backgroundColor: '#1d9bf0', color: '#fff', borderRadius: '9999px', fontWeight: '500', cursor: 'pointer'}} id="tweetRetweet">  <i class="fa fa-twitter"></i> Retweet</a>
                         </div>
                     : null }
                     
@@ -214,14 +224,14 @@ const Register = () => {
                             
                             <InstagramEmbed
                                 url= 'https://www.instagram.com/metafomos'
-                                clientAccessToken="637258717349315|e15e7baaff0a432ad4acb78734ef3bfc"
+                                clientAccessToken="<Replace Instagram client access token >"
                                 maxWidth={320}
                                 hideCaption={false}
                                 containerTagName='div'
                                 protocol=''
                                 injectScript
                                 onLoading={() => {}}
-                                onSuccess={() => {}}
+                                onSuccess={() => { onInstagramEmbedSuccess() }}
                                 onFailure={() => { onInstagramEmbedFail() }}
                                 />
                         </div>
@@ -241,20 +251,14 @@ const Register = () => {
                         <div className="container p-5">
                             <h6 className="text-dark">Follow Us On Facebook Or Reddit To Continue</h6>
                             
-                            <div class="sharethis-inline-follow-buttons mb-3"></div>
+                            <div onClick={() => proceedWithReddit() } class="sharethis-inline-follow-buttons mb-3"></div>
                             <div className="fb-page" data-href="https://www.facebook.com/metafomos" data-tabs="timeline" data-width="300px" data-height="250px" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
                                 <blockquote cite="https://www.facebook.com/metafomos" className="fb-xfbml-parse-ignore">
                                     <a href="https://www.facebook.com/metafomos">MetaFomos</a>
                                 </blockquote>
                             </div>
                         </div>
-                    : null }
-
-
-                    {/* { followSocialMediaStep == 'JOIN_REDDIT' ? 
-                        <div class="sharethis-inline-follow-buttons"></div>
-                    : null } */}
-                
+                    : null }                
                 </Modal>
             </div>
         </Fragment>

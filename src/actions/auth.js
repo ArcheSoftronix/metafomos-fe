@@ -6,10 +6,26 @@ import { toast } from 'react-toastify';
 export const loadUser = () => async dispatch => {
   try {
     const res = await api.get('/auth');
+    console.log('res.data >>> ', res.data)
     dispatch({
       type: 'USER_LOADED',
       payload: res.data
     });
+  } catch (err) {
+    dispatch({
+      type: 'AUTH_ERROR'
+    });
+  }
+};
+
+export const generateTokenTwo = () => async dispatch => {
+  try {
+    const res = await api.post('/auth/generate-token2');
+    dispatch({
+      type: 'IS_USER_LOGGEDIN_FIRST_TIME',
+      payload: res.data.is_logged_in_first_time
+    });
+    console.log('Res from generating token two >>> ', res.data);
   } catch (err) {
     dispatch({
       type: 'AUTH_ERROR'
