@@ -218,9 +218,6 @@ const Register = () => {
                     {followSocialMediaStep == 'JOIN_INSTAGRAM' ? 
                         <div className="container p-5">
                             <h6 className="text-dark">Join Us On Instagram To Continue</h6>
-                            {/* Arche "680493446295538|eafd897d70c305694abbc5b95e4e630a"
-                                https://www.instagram.com/archedevs
-                            */}
                             
                             <InstagramEmbed
                                 url= 'https://www.instagram.com/metafomos'
