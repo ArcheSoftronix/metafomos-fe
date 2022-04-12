@@ -36,7 +36,7 @@ const Register = () => {
                 if (!intentEvent) return;
                 var retweetedTweetId = intentEvent.data.source_tweet_id;
 
-                setFollowSocialMediaStep('JOIN_INSTAGRAM')
+                setFollowSocialMediaStep('JOIN_FACEBOOK') //
                 console.log('retweetedTweetId : ', retweetedTweetId)
             }
         );
@@ -62,7 +62,7 @@ const Register = () => {
     const [showModal, setShowModal] = useState(false);
 
     const { email, password, password_confirm } = formData;
-    const [followSocialMediaStep, setFollowSocialMediaStep] = useState('JOIN_FACEBOOK'); // JOIN_FACEBOOK | JOIN_DISCORD | JOIN_INSTAGRAM | TWITTER_FOLLOW | TWITTER_TWEET_RETWEET
+    const [followSocialMediaStep, setFollowSocialMediaStep] = useState('TWITTER_FOLLOW'); // TWITTER_FOLLOW | TWITTER_TWEET_RETWEET | JOIN_FACEBOOK | JOIN_DISCORD | JOIN_INSTAGRAM 
 
     const setContentRef = useRef(null);
     function handleIframe() {
@@ -180,14 +180,14 @@ const Register = () => {
                     <button className='panel3' onClick={() => onCreateAccount()}><span>Create Account</span></button>
                     <div className='login-plug'>
                         <GoogleLogin className='g-login'
-                            clientId="<CLIENT ID>"
+                            clientId="860538264827-8qf2qpp6mqki8asmbpsroulb9u16un61.apps.googleusercontent.com"
                             buttonText="Signup"
                             onSuccess={responseGOAuthSignup}
                             onFailure={responseGOAuthSignup}
                             cookiePolicy={'single_host_origin'}
                         />
                         <FacebookLogin cssClass="g-login p-3 pr-5 bg-white text-secondary w-100 font-weight-light"
-                            appId="<APP ID>"
+                            appId="984455555809462"
                             textButton="Signup"
                             fields="name,email,picture"
                             callback={responseFOAuthSignup}
@@ -211,7 +211,7 @@ const Register = () => {
                     {followSocialMediaStep == 'TWITTER_TWEET_RETWEET' ? 
                         <div className="container p-5">
                             <h6 className="text-dark">Retweet Our Tweet To Continue</h6>
-                            <a href="https://twitter.com/intent/retweet?tweet_id=463440424141459456&via=MetaFomos&hashtags=MetaFomos" style={{fontSize:'14px', fontStyle: 'normal', fontFamily: '"Helvetica Neue", Arial, sans-serif', position: 'relative', height: '20px', boxSizing: 'border-box', padding: '6px 12px 6px 12px', backgroundColor: '#1d9bf0', color: '#fff', borderRadius: '9999px', fontWeight: '500', cursor: 'pointer'}} id="tweetRetweet">  <i class="fa fa-twitter"></i> Retweet</a>
+                            <a href="https://twitter.com/intent/retweet?tweet_id=1506696201093058560&via=MetaFomos&hashtags=MetaFomos" style={{fontSize:'14px', fontStyle: 'normal', fontFamily: '"Helvetica Neue", Arial, sans-serif', position: 'relative', height: '20px', boxSizing: 'border-box', padding: '6px 12px 6px 12px', backgroundColor: '#1d9bf0', color: '#fff', borderRadius: '9999px', fontWeight: '500', cursor: 'pointer'}} id="tweetRetweet">  <i class="fa fa-twitter"></i> Retweet</a>
                         </div>
                     : null }
                     
@@ -221,7 +221,7 @@ const Register = () => {
                             
                             <InstagramEmbed
                                 url= 'https://www.instagram.com/metafomos'
-                                clientAccessToken="<Replace Instagram client access token >"
+                                clientAccessToken="637258717349315|e15e7baaff0a432ad4acb78734ef3bfc"
                                 maxWidth={320}
                                 hideCaption={false}
                                 containerTagName='div'
@@ -248,7 +248,7 @@ const Register = () => {
                         <div className="container p-5">
                             <h6 className="text-dark">Follow Us On Facebook Or Reddit To Continue</h6>
                             
-                            <div onClick={() => proceedWithReddit() } class="sharethis-inline-follow-buttons mb-3"></div>
+                            <div onClick={() => proceedWithReddit() } className="sharethis-inline-follow-buttons mb-3"></div>
                             <div className="fb-page" data-href="https://www.facebook.com/metafomos" data-tabs="timeline" data-width="300px" data-height="250px" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
                                 <blockquote cite="https://www.facebook.com/metafomos" className="fb-xfbml-parse-ignore">
                                     <a href="https://www.facebook.com/metafomos">MetaFomos</a>

@@ -1,8 +1,10 @@
 import React, { Fragment, useState, useEffect, useRef } from 'react';
 import { connectAdvanced, useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from 'react-google-login';
 import FacebookLogin from 'react-facebook-login';
 import InstagramEmbed from 'react-instagram-embed';
+import { FacebookProvider, Page } from 'react-facebook';
 import { Link, Navigate } from 'react-router-dom';
 import { login, socialMediaLogin, generateTokenTwo } from '../../actions/auth';
 import { ToastContainer, toast } from 'react-toastify';
@@ -11,11 +13,22 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
     const auth = useSelector(state => state.auth)
+    let navigate = useNavigate(); 
+    /* const routeChange = () =>{ 
+        let path = `newPath`; 
+        navigate(path);
+    } */
     useEffect(() => {
         const body = document.querySelector('#root');
         body.scrollIntoView({
             behavior: 'smooth'
         }, 500)
+
+        document.querySelectorAll('.pluginConnectButtonDisconnected').forEach(item => {
+            item.addEventListener('click', event => {
+                console.log('Follow Btn Clicked !! ');
+            })
+        })
     }, []);
 
     useEffect(() => {
@@ -44,8 +57,10 @@ const Login = () => {
 
     useEffect(() => {
         if(auth.is_logged_in_first_time){
+            navigate("/profile/overview")
             setShowModal(true)
         } else {
+            navigate("/profile/overview")
             setShowModal(false)
         }
     },[auth])
@@ -108,8 +123,12 @@ const Login = () => {
     }
 
     const proceedWithReddit = (e) => {
-        console.log('proceedWithReddit >>>> ', e)
         dispatch(generateTokenTwo());
+    }
+    
+    const proceedWithFb = (e) => {
+        console.log('proceedWithFb >>>> ', e)
+        // dispatch(generateTokenTwo());
     }
 
     return (
@@ -145,14 +164,14 @@ const Login = () => {
                     <button className='panel3' onClick={() => onLoginAccount()}><span>Login Account</span></button>
                     <div className='login-plug'>
                         <GoogleLogin className='g-login'
-                            clientId="<CLIENT ID>"
+                            clientId="860538264827-8qf2qpp6mqki8asmbpsroulb9u16un61.apps.googleusercontent.com"
                             buttonText="Login"
                             onSuccess={responseOAuthLogin}
                             onFailure={responseOAuthLogin}
                             cookiePolicy={'single_host_origin'}
                         />
                         <FacebookLogin cssClass="g-login p-3 pr-5 bg-white text-secondary w-100 font-weight-light"
-                            appId="<APP ID>"
+                            appId="984455555809462"
                             textButton="Login"
                             fields="name,email,picture"
                             callback={responseOAuthLogin}
@@ -185,10 +204,6 @@ const Login = () => {
                     {followSocialMediaStep == 'JOIN_INSTAGRAM' ? 
                         <div className="container p-5">
                             <h6 className="text-dark">Join Us On Instagram To Continue</h6>
-                            {/* Arche "680493446295538|eafd897d70c305694abbc5b95e4e630a"
-                                https://www.instagram.com/archedevs
-                            */}
-                            
                             <InstagramEmbed
                                 url= 'https://www.instagram.com/metafomos'
                                 clientAccessToken="<Replace Instagram client access token >"
@@ -218,12 +233,17 @@ const Login = () => {
                         <div className="container p-5">
                             <h6 className="text-dark">Follow Us On Facebook Or Reddit To Continue</h6>
                             
-                            <div onClick={() => proceedWithReddit() } className="sharethis-inline-follow-buttons mb-3"></div>
-                            <div className="fb-page" data-href="https://www.facebook.com/metafomos" data-tabs="timeline" data-width="300px" data-height="250px" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
+                            {/* <div className="fb-page" data-href="https://www.facebook.com/metafomos" data-tabs="timeline" data-width="300px" data-height="250px" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
                                 <blockquote cite="https://www.facebook.com/metafomos" className="fb-xfbml-parse-ignore">
-                                    <a href="https://www.facebook.com/metafomos">MetaFomos</a>
+                                <a href="https://www.facebook.com/metafomos">MetaFomos</a>
                                 </blockquote>
-                            </div>
+                            </div>  pluginConnectButtonDisconnected */}
+
+                            <FacebookProvider appId="984455555809462">
+                                <Page href="https://www.facebook.com/metafomos" onFollowed={() => proceedWithFb() } />
+                            </FacebookProvider>
+
+                            <div onClick={() => proceedWithReddit() } className="sharethis-inline-follow-buttons mt-3"></div>
                         </div>
                     : null }
                 
