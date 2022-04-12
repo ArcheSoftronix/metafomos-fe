@@ -13,22 +13,18 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
     const auth = useSelector(state => state.auth)
-    let navigate = useNavigate(); 
-    /* const routeChange = () =>{ 
-        let path = `newPath`; 
-        navigate(path);
-    } */
+    let navigate = useNavigate();
     useEffect(() => {
         const body = document.querySelector('#root');
         body.scrollIntoView({
             behavior: 'smooth'
         }, 500)
 
-        document.querySelectorAll('.pluginConnectButtonDisconnected').forEach(item => {
+        /* document.querySelectorAll('.pluginConnectButtonDisconnected').forEach(item => {
             item.addEventListener('click', event => {
                 console.log('Follow Btn Clicked !! ');
             })
-        })
+        }) */
     }, []);
 
     useEffect(() => {
@@ -57,21 +53,32 @@ const Login = () => {
 
     useEffect(() => {
         if(auth.is_logged_in_first_time){
-            navigate("/profile/overview")
+            isLoggedInFirstTime = auth.is_logged_in_first_time
+            // navigate("/profile/overview")
             setShowModal(true)
         } else {
-            navigate("/profile/overview")
+            isLoggedInFirstTime = auth.is_logged_in_first_time
+            // navigate("/profile/overview")
             setShowModal(false)
         }
     },[auth])
+
+    function hideTdo() {
+        var target = document.querySelector('#follow-discord iframe');
+        if(target) {
+            console.log('GET IFRAME ELEMENT', target)
+            target.contentDocument.querySelector('a[href*="https://discord.com/invite/MTvNUS6U?utm_source=Discord%20Widget&amp;utm_medium=Connect"]').remove();
+        }
+    }
 
     const dispatch = useDispatch();
     const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
     
     /* IT WILL LISTEN TO APP STATE AND SHOW SOCIAL MEDIAL FOLLOW STEPS IF USER IS GETTING LOGGEDIN FIRST TIME */
-    const isLoggedInFirstTime = useSelector(state => state.auth.is_logged_in_first_time);
+    let isLoggedInFirstTime
+    //  = useSelector(state => state.auth.is_logged_in_first_time);
     const [showModal, setShowModal] = useState(false);
-    const [followSocialMediaStep, setFollowSocialMediaStep] = useState('JOIN_FACEBOOK'); // JOIN_FACEBOOK | JOIN_DISCORD | JOIN_INSTAGRAM | TWITTER_FOLLOW | TWITTER_TWEET_RETWEET
+    const [followSocialMediaStep, setFollowSocialMediaStep] = useState('JOIN_DISCORD'); // JOIN_FACEBOOK | JOIN_DISCORD | JOIN_INSTAGRAM | TWITTER_FOLLOW | TWITTER_TWEET_RETWEET
 
     const [formData, setFormData] = useState({
         email: '',
@@ -100,13 +107,19 @@ const Login = () => {
     }
 
     if (isAuthenticated && !isLoggedInFirstTime) {
-        console.log(isAuthenticated, !isLoggedInFirstTime)
-        return <Navigate to="/profile/overview" />
+        console.log('state isLoggedInFirstTime ', isLoggedInFirstTime);
+        // return <Navigate to="/profile/overview" />
+    }
+    
+    if (isAuthenticated && isLoggedInFirstTime) {
+        console.log('isLoggedInFirstTime >> ', isLoggedInFirstTime);
+        setShowModal(true)
     }
 
     // const setContentRef = useRef(null);
     function handleIframe(e) {
         console.log('handleIframe >> ', e)
+        hideTdo()
         // const iframeItem = setContentRef.current;
         // const discordBtn = iframeItem.contentWindow.document.getElementsByTagName("a");
         // a tag class name widgetBtnConnect-2fvtGa
@@ -225,7 +238,7 @@ const Login = () => {
                             {/* ref={setContentRef}
                                 IN BELLOW DISCORD WIDGET id=944198467440500757 IS FOR TESTING CREATE AND  REPLACE YOUR DISCORD SERVER ID HERE!
                             */}
-                            <iframe  src="https://discord.com/widget?id=944198467440500757&theme=dark" width="350" height="300" allowtransparency="true" frameBorder="0" sandbox="allow-top-navigation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" onLoad={handleIframe} referrerPolicy="origin same-origin origin-when-cross-origin no-referrer-when-downgrade"></iframe>
+                            <iframe id="follow-discord" src="https://discord.com/widget?id=944198467440500757&theme=dark" width="350" height="300" allowtransparency="true" frameBorder="0" sandbox="allow-top-navigation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" onLoad={handleIframe} referrerPolicy="origin same-origin origin-when-cross-origin no-referrer-when-downgrade"></iframe>
                         </div>
                     : null }
 
