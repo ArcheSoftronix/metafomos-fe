@@ -20,11 +20,14 @@ const Login = () => {
             behavior: 'smooth'
         }, 500)
 
-        /* document.querySelectorAll('.pluginConnectButtonDisconnected').forEach(item => {
-            item.addEventListener('click', event => {
-                console.log('Follow Btn Clicked !! ');
-            })
-        }) */
+        var monitor = setInterval(function(){
+            var elem = document.activeElement;
+            if(elem && elem.tagName == 'IFRAME'){
+                setFollowSocialMediaStep('JOIN_FACEBOOK')
+                clearInterval(monitor);
+            }
+        }, 500);
+
     }, []);
 
     useEffect(() => {
@@ -56,20 +59,19 @@ const Login = () => {
             isLoggedInFirstTime = auth.is_logged_in_first_time
             // navigate("/profile/overview")
             setShowModal(true)
+
+            document.querySelectorAll('.pluginConnectButtonDisconnected').forEach(item => {
+                console.log('item >> ', item);
+                item.addEventListener('click', event => {
+                    console.log('Follow Btn Clicked !! ');
+                })
+            })
         } else {
             isLoggedInFirstTime = auth.is_logged_in_first_time
             // navigate("/profile/overview")
             setShowModal(false)
         }
     },[auth])
-
-    function hideTdo() {
-        var target = document.querySelector('#follow-discord iframe');
-        if(target) {
-            console.log('GET IFRAME ELEMENT', target)
-            target.contentDocument.querySelector('a[href*="https://discord.com/invite/MTvNUS6U?utm_source=Discord%20Widget&amp;utm_medium=Connect"]').remove();
-        }
-    }
 
     const dispatch = useDispatch();
     const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
@@ -78,7 +80,7 @@ const Login = () => {
     let isLoggedInFirstTime
     //  = useSelector(state => state.auth.is_logged_in_first_time);
     const [showModal, setShowModal] = useState(false);
-    const [followSocialMediaStep, setFollowSocialMediaStep] = useState('JOIN_DISCORD'); // JOIN_FACEBOOK | JOIN_DISCORD | JOIN_INSTAGRAM | TWITTER_FOLLOW | TWITTER_TWEET_RETWEET
+    const [followSocialMediaStep, setFollowSocialMediaStep] = useState('TWITTER_FOLLOW'); // JOIN_FACEBOOK | JOIN_DISCORD | JOIN_INSTAGRAM | TWITTER_FOLLOW | TWITTER_TWEET_RETWEET
 
     const [formData, setFormData] = useState({
         email: '',
@@ -107,24 +109,13 @@ const Login = () => {
     }
 
     if (isAuthenticated && !isLoggedInFirstTime) {
-        console.log('state isLoggedInFirstTime ', isLoggedInFirstTime);
+        // console.log('state isLoggedInFirstTime ', isLoggedInFirstTime);
         // return <Navigate to="/profile/overview" />
     }
     
     if (isAuthenticated && isLoggedInFirstTime) {
-        console.log('isLoggedInFirstTime >> ', isLoggedInFirstTime);
+        // console.log('isLoggedInFirstTime >> ', isLoggedInFirstTime);
         setShowModal(true)
-    }
-
-    // const setContentRef = useRef(null);
-    function handleIframe(e) {
-        console.log('handleIframe >> ', e)
-        hideTdo()
-        // const iframeItem = setContentRef.current;
-        // const discordBtn = iframeItem.contentWindow.document.getElementsByTagName("a");
-        // a tag class name widgetBtnConnect-2fvtGa
-        
-        // console.log('discordBtn >>> ', iframeItem.contentWindow.window.document)
     }
 
     const onInstagramEmbedFail = (e) => {
@@ -141,7 +132,7 @@ const Login = () => {
     
     const proceedWithFb = (e) => {
         console.log('proceedWithFb >>>> ', e)
-        // dispatch(generateTokenTwo());
+        dispatch(generateTokenTwo());
     }
 
     return (
@@ -238,7 +229,7 @@ const Login = () => {
                             {/* ref={setContentRef}
                                 IN BELLOW DISCORD WIDGET id=944198467440500757 IS FOR TESTING CREATE AND  REPLACE YOUR DISCORD SERVER ID HERE!
                             */}
-                            <iframe id="follow-discord" src="https://discord.com/widget?id=944198467440500757&theme=dark" width="350" height="300" allowtransparency="true" frameBorder="0" sandbox="allow-top-navigation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" onLoad={handleIframe} referrerPolicy="origin same-origin origin-when-cross-origin no-referrer-when-downgrade"></iframe>
+                            <iframe id="follow-discord" src="https://discord.com/widget?id=944198467440500757&theme=dark" width="350" height="300" allowtransparency="true" frameBorder="0" sandbox="allow-top-navigation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" referrerPolicy="origin same-origin origin-when-cross-origin no-referrer-when-downgrade"></iframe>
                         </div>
                     : null }
 
@@ -250,10 +241,10 @@ const Login = () => {
                                 <blockquote cite="https://www.facebook.com/metafomos" className="fb-xfbml-parse-ignore">
                                 <a href="https://www.facebook.com/metafomos">MetaFomos</a>
                                 </blockquote>
-                            </div>  pluginConnectButtonDisconnected */}
+                            </div>  */}
 
                             <FacebookProvider appId="984455555809462">
-                                <Page href="https://www.facebook.com/metafomos" onFollowed={() => proceedWithFb() } />
+                                <Page href="https://www.facebook.com/metafomos" onFollowed={proceedWithFb} />
                             </FacebookProvider>
 
                             <div onClick={() => proceedWithReddit() } className="sharethis-inline-follow-buttons mt-3"></div>
