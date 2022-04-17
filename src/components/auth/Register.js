@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from 'react-google-login';
 import FacebookLogin from 'react-facebook-login';
+import { FacebookProvider, Page } from 'react-facebook';
 import InstagramEmbed from 'react-instagram-embed';
 import { register, socialMediaSignUp, generateTokenTwo } from '../../actions/auth';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,6 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const Register = () => {
     const auth = useSelector(state => state.auth)
+    let navigate = useNavigate();
     useEffect(() => {
         const body = document.querySelector('#root');
         body.scrollIntoView({
@@ -26,7 +28,6 @@ const Register = () => {
                 var label = intentEvent.data.user_id + " (" + intentEvent.data.screen_name + ")";
 
                 setFollowSocialMediaStep('TWITTER_TWEET_RETWEET')
-                console.log('Twitter User : ', label)
             }
         );
 
@@ -35,18 +36,21 @@ const Register = () => {
             function(intentEvent) {
                 if (!intentEvent) return;
                 var retweetedTweetId = intentEvent.data.source_tweet_id;
-
-                setFollowSocialMediaStep('JOIN_FACEBOOK') //
-                console.log('retweetedTweetId : ', retweetedTweetId)
+                startToListenClick()
+                setFollowSocialMediaStep('JOIN_DISCORD')
             }
         );
     },[])
     
     useEffect(() => {
+        let loginFlag
+
         if(auth.is_logged_in_first_time){
-            setShowModal(true)
+            loginFlag = auth.is_logged_in_first_time
+            // setShowModal(true)
         } else {
-            setShowModal(false)
+            loginFlag = auth.is_logged_in_first_time
+            // setShowModal(false)
         }
     },[auth])
 
@@ -63,16 +67,6 @@ const Register = () => {
 
     const { email, password, password_confirm } = formData;
     const [followSocialMediaStep, setFollowSocialMediaStep] = useState('TWITTER_FOLLOW'); // TWITTER_FOLLOW | TWITTER_TWEET_RETWEET | JOIN_FACEBOOK | JOIN_DISCORD | JOIN_INSTAGRAM 
-
-    const setContentRef = useRef(null);
-    function handleIframe() {
-        
-        const iframeItem = setContentRef.current;
-        // const discordBtn = iframeItem.contentWindow.document.getElementsByTagName("a");
-        // a tag class name widgetBtnConnect-2fvtGa
-        
-        // console.log('discordBtn >>> ', iframeItem.contentWindow.window.document)
-    }
 
     const onCreateAccount = () => {
         if (password !== password_confirm) {
@@ -121,9 +115,15 @@ const Register = () => {
         }
     }
     
-    if (isAuthenticated && !isLoggedInFirstTime) {
-        return <Navigate to="/profile/overview" />
+    if (isAuthenticated && isLoggedInFirstTime) {
+        if (!showModal) {
+            setShowModal(true)
+        }
     }
+
+    /* if (isAuthenticated && !isLoggedInFirstTime) {
+        return <Navigate to="/profile/overview" />
+    } */
     
     const onInstagramEmbedFail = (e) => {
         console.log('onInstagramEmbedFail >> ', e)
@@ -134,10 +134,31 @@ const Register = () => {
     }
 
     const proceedWithReddit = (e) => {
-        console.log('proceedWithReddit >>>> ', e)
         dispatch(generateTokenTwo());
+        navigate("/profile/overview")
     }
     
+    const proceedWithFb = (e) => {
+        dispatch(generateTokenTwo());
+        navigate("/profile/overview")
+    }
+    
+    function startToListenClick() {
+        var monitor = setInterval(function(){
+            var elem = document.activeElement;
+            
+            if(elem && elem.tagName == 'IFRAME' && elem.id != 'twitter-widget-0'){
+                setFollowSocialMediaStep('JOIN_FACEBOOK')
+            }
+            
+            if(elem && elem.tagName == 'IFRAME' && elem.getAttribute('src').startsWith('https://www.facebook.com')) {
+                clearInterval(monitor);
+                proceedWithFb()
+                setShowModal(false)
+            }
+        }, 500);
+    }
+
     return (
         <Fragment>
             <ToastContainer />
@@ -240,20 +261,24 @@ const Register = () => {
                             {/* 
                                 IN BELLOW DISCORD WIDGET id=944198467440500757 IS FOR TESTING CREATE AND  REPLACE YOUR DISCORD SERVER ID HERE!
                             */}
-                            <iframe ref={setContentRef} src="https://discord.com/widget?id=944198467440500757&theme=dark" width="350" height="300" allowtransparency="true" frameBorder="0" sandbox="allow-top-navigation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" onLoad={handleIframe} referrerPolicy="origin same-origin origin-when-cross-origin no-referrer-when-downgrade"></iframe>
+                            <iframe id="follow-discord" src="https://discord.com/widget?id=944198467440500757&theme=dark" width="350" height="300" allowtransparency="true" frameBorder="0" sandbox="allow-top-navigation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" referrerPolicy="origin same-origin origin-when-cross-origin no-referrer-when-downgrade"></iframe>
                         </div>
                     : null }
 
                     { followSocialMediaStep == 'JOIN_FACEBOOK' ? 
                         <div className="container p-5">
                             <h6 className="text-dark">Follow Us On Facebook Or Reddit To Continue</h6>
-                            
+                            <FacebookProvider appId="984455555809462">
+                                <Page href="https://www.facebook.com/metafomos" />
+                            </FacebookProvider>
+
                             <div onClick={() => proceedWithReddit() } className="sharethis-inline-follow-buttons mb-3"></div>
-                            <div className="fb-page" data-href="https://www.facebook.com/metafomos" data-tabs="timeline" data-width="300px" data-height="250px" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
+
+                            {/* <div className="fb-page" data-href="https://www.facebook.com/metafomos" data-tabs="timeline" data-width="300px" data-height="250px" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
                                 <blockquote cite="https://www.facebook.com/metafomos" className="fb-xfbml-parse-ignore">
                                     <a href="https://www.facebook.com/metafomos">MetaFomos</a>
                                 </blockquote>
-                            </div>
+                            </div> */}
                         </div>
                     : null }                
                 </Modal>

@@ -1,5 +1,5 @@
-import React, { Fragment, useState, useEffect, useRef } from 'react';
-import { connectAdvanced, useDispatch, useSelector } from 'react-redux';
+import React, { Fragment, useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from 'react-google-login';
 import FacebookLogin from 'react-facebook-login';
@@ -19,66 +19,44 @@ const Login = () => {
         body.scrollIntoView({
             behavior: 'smooth'
         }, 500)
-
-        var monitor = setInterval(function(){
-            var elem = document.activeElement;
-            if(elem && elem.tagName == 'IFRAME'){
-                setFollowSocialMediaStep('JOIN_FACEBOOK')
-                clearInterval(monitor);
-            }
-        }, 500);
-
     }, []);
 
     useEffect(() => {
-        window.twttr.events.bind(
-            'follow',
-            function (intentEvent) {
+        window.twttr.events.bind('follow', function (intentEvent) {
                 if (!intentEvent) return;
                 var label = intentEvent.data.user_id + " (" + intentEvent.data.screen_name + ")";
 
                 setFollowSocialMediaStep('TWITTER_TWEET_RETWEET')
-                console.log('Twitter User : ', label)
             }
         );
 
-        window.twttr.events.bind(
-            'retweet',
-            function(intentEvent) {
+        window.twttr.events.bind('retweet', function(intentEvent) {
                 if (!intentEvent) return;
                 var retweetedTweetId = intentEvent.data.source_tweet_id;
-
-                setFollowSocialMediaStep('JOIN_INSTAGRAM')
-                console.log('retweetedTweetId : ', retweetedTweetId)
+                setFollowSocialMediaStep('JOIN_DISCORD')
             }
         );
     },[])
 
     useEffect(() => {
+        let loginFlag
         if(auth.is_logged_in_first_time){
-            isLoggedInFirstTime = auth.is_logged_in_first_time
-            // navigate("/profile/overview")
-            setShowModal(true)
-
-            document.querySelectorAll('.pluginConnectButtonDisconnected').forEach(item => {
-                console.log('item >> ', item);
-                item.addEventListener('click', event => {
-                    console.log('Follow Btn Clicked !! ');
-                })
-            })
+            loginFlag = auth.is_logged_in_first_time
+            // setShowModal(true)
         } else {
-            isLoggedInFirstTime = auth.is_logged_in_first_time
-            // navigate("/profile/overview")
-            setShowModal(false)
+            loginFlag = auth.is_logged_in_first_time
+            // setShowModal(false)
+            // if (isAuthenticated && !isLoggedInFirstTime)
+            //     navigate("/profile/overview")
         }
+        console.log('loginFlag >>> ', loginFlag);
     },[auth])
 
     const dispatch = useDispatch();
     const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
     
     /* IT WILL LISTEN TO APP STATE AND SHOW SOCIAL MEDIAL FOLLOW STEPS IF USER IS GETTING LOGGEDIN FIRST TIME */
-    let isLoggedInFirstTime
-    //  = useSelector(state => state.auth.is_logged_in_first_time);
+    var isLoggedInFirstTime = useSelector(state => state.auth.is_logged_in_first_time);
     const [showModal, setShowModal] = useState(false);
     const [followSocialMediaStep, setFollowSocialMediaStep] = useState('TWITTER_FOLLOW'); // JOIN_FACEBOOK | JOIN_DISCORD | JOIN_INSTAGRAM | TWITTER_FOLLOW | TWITTER_TWEET_RETWEET
 
@@ -108,15 +86,18 @@ const Login = () => {
         }
     }
 
-    if (isAuthenticated && !isLoggedInFirstTime) {
-        // console.log('state isLoggedInFirstTime ', isLoggedInFirstTime);
-        // return <Navigate to="/profile/overview" />
-    }
-    
     if (isAuthenticated && isLoggedInFirstTime) {
-        // console.log('isLoggedInFirstTime >> ', isLoggedInFirstTime);
-        setShowModal(true)
+        if (!showModal) {
+            setShowModal(true)
+        }
+        startToListenClick()
     }
+
+    /* if (isAuthenticated && !isLoggedInFirstTime) {
+        if (!showModal)
+            navigate("/profile/overview")
+            // return <Navigate to="/profile/overview" />
+    } */
 
     const onInstagramEmbedFail = (e) => {
         console.log('onInstagramEmbedFail >> ', e)
@@ -128,11 +109,28 @@ const Login = () => {
 
     const proceedWithReddit = (e) => {
         dispatch(generateTokenTwo());
+        navigate("/profile/overview")
     }
     
     const proceedWithFb = (e) => {
-        console.log('proceedWithFb >>>> ', e)
         dispatch(generateTokenTwo());
+        navigate("/profile/overview")
+    }
+
+    function startToListenClick() {
+        var monitor = setInterval(function(){
+            var elem = document.activeElement;
+            
+            if(elem && elem.tagName == 'IFRAME' && elem.id != 'twitter-widget-0'){
+                setFollowSocialMediaStep('JOIN_FACEBOOK')
+            }
+            
+            if(elem && elem.tagName == 'IFRAME' && elem.getAttribute('src').startsWith('https://www.facebook.com')) {
+                clearInterval(monitor);
+                proceedWithFb()
+                setShowModal(false)
+            }
+        }, 500);
     }
 
     return (
@@ -201,7 +199,7 @@ const Login = () => {
                     {followSocialMediaStep == 'TWITTER_TWEET_RETWEET' ? 
                         <div className="container p-5">
                             <h6 className="text-dark">Retweet Our Tweet To Continue</h6>
-                            <a href="https://twitter.com/intent/retweet?tweet_id=463440424141459456&via=MetaFomos&hashtags=MetaFomos" style={{fontSize:'14px', fontStyle: 'normal', fontFamily: '"Helvetica Neue", Arial, sans-serif', position: 'relative', height: '20px', boxSizing: 'border-box', padding: '6px 12px 6px 12px', backgroundColor: '#1d9bf0', color: '#fff', borderRadius: '9999px', fontWeight: '500', cursor: 'pointer'}} id="tweetRetweet">  <i className="fa fa-twitter"></i> Retweet</a>
+                            <a href="https://twitter.com/intent/retweet?tweet_id=1506696201093058560&via=MetaFomos&hashtags=MetaFomos" style={{fontSize:'14px', fontStyle: 'normal', fontFamily: '"Helvetica Neue", Arial, sans-serif', position: 'relative', height: '20px', boxSizing: 'border-box', padding: '6px 12px 6px 12px', backgroundColor: '#1d9bf0', color: '#fff', borderRadius: '9999px', fontWeight: '500', cursor: 'pointer'}} id="tweetRetweet">  <i className="fa fa-twitter"></i> Retweet</a>
                         </div>
                     : null }
                     
@@ -244,7 +242,7 @@ const Login = () => {
                             </div>  */}
 
                             <FacebookProvider appId="984455555809462">
-                                <Page href="https://www.facebook.com/metafomos" onFollowed={proceedWithFb} />
+                                <Page href="https://www.facebook.com/metafomos" />
                             </FacebookProvider>
 
                             <div onClick={() => proceedWithReddit() } className="sharethis-inline-follow-buttons mt-3"></div>
