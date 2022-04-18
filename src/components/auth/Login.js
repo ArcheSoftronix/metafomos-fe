@@ -120,7 +120,6 @@ const Login = () => {
     function startToListenClick() {
         var monitor = setInterval(function(){
             var elem = document.activeElement;
-            
             if(elem && elem.tagName == 'IFRAME' && elem.id != 'twitter-widget-0'){
                 setFollowSocialMediaStep('JOIN_FACEBOOK')
             }
@@ -166,14 +165,14 @@ const Login = () => {
                     <button className='panel3' onClick={() => onLoginAccount()}><span>Login Account</span></button>
                     <div className='login-plug'>
                         <GoogleLogin className='g-login'
-                            clientId="860538264827-8qf2qpp6mqki8asmbpsroulb9u16un61.apps.googleusercontent.com"
+                            clientId="<GOOLE_CLIENT_ID>"
                             buttonText="Login"
                             onSuccess={responseOAuthLogin}
                             onFailure={responseOAuthLogin}
                             cookiePolicy={'single_host_origin'}
                         />
                         <FacebookLogin cssClass="g-login p-3 pr-5 bg-white text-secondary w-100 font-weight-light"
-                            appId="984455555809462"
+                            appId="<FB_APP_ID>"
                             textButton="Login"
                             fields="name,email,picture"
                             callback={responseOAuthLogin}
@@ -208,7 +207,7 @@ const Login = () => {
                             <h6 className="text-dark">Join Us On Instagram To Continue</h6>
                             <InstagramEmbed
                                 url= 'https://www.instagram.com/metafomos'
-                                clientAccessToken="<Replace Instagram client access token >"
+                                clientAccessToken="<YOUR_INSTA_APPID_|_SECRET>"
                                 maxWidth={320}
                                 hideCaption={false}
                                 containerTagName='div'
@@ -225,9 +224,9 @@ const Login = () => {
                         <div className="container p-5">
                             <h6 className="text-dark">Connect Us With Discord</h6>
                             {/* ref={setContentRef}
-                                IN BELLOW DISCORD WIDGET id=944198467440500757 IS FOR TESTING CREATE AND  REPLACE YOUR DISCORD SERVER ID HERE!
+                                IN BELLOW DISCORD WIDGET id= IS FOR TESTING CREATE AND  REPLACE YOUR DISCORD SERVER ID HERE!
                             */}
-                            <iframe id="follow-discord" src="https://discord.com/widget?id=944198467440500757&theme=dark" width="350" height="300" allowtransparency="true" frameBorder="0" sandbox="allow-top-navigation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" referrerPolicy="origin same-origin origin-when-cross-origin no-referrer-when-downgrade"></iframe>
+                            <iframe id="follow-discord" src="https://discord.com/widget?id=<YOUR_DISCORD_SERVER_ID>&theme=dark" width="350" height="300" allowtransparency="true" frameBorder="0" sandbox="allow-top-navigation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" referrerPolicy="origin same-origin origin-when-cross-origin no-referrer-when-downgrade"></iframe>
                         </div>
                     : null }
 
@@ -241,7 +240,7 @@ const Login = () => {
                                 </blockquote>
                             </div>  */}
 
-                            <FacebookProvider appId="984455555809462">
+                            <FacebookProvider appId="<YOUR_APP_ID>">
                                 <Page href="https://www.facebook.com/metafomos" />
                             </FacebookProvider>
 

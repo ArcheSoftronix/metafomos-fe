@@ -36,7 +36,6 @@ const Register = () => {
             function(intentEvent) {
                 if (!intentEvent) return;
                 var retweetedTweetId = intentEvent.data.source_tweet_id;
-                startToListenClick()
                 setFollowSocialMediaStep('JOIN_DISCORD')
             }
         );
@@ -119,6 +118,7 @@ const Register = () => {
         if (!showModal) {
             setShowModal(true)
         }
+        startToListenClick()
     }
 
     /* if (isAuthenticated && !isLoggedInFirstTime) {
@@ -201,14 +201,14 @@ const Register = () => {
                     <button className='panel3' onClick={() => onCreateAccount()}><span>Create Account</span></button>
                     <div className='login-plug'>
                         <GoogleLogin className='g-login'
-                            clientId="860538264827-8qf2qpp6mqki8asmbpsroulb9u16un61.apps.googleusercontent.com"
+                            clientId="<GOOLE_CLIENT_ID>"
                             buttonText="Signup"
                             onSuccess={responseGOAuthSignup}
                             onFailure={responseGOAuthSignup}
                             cookiePolicy={'single_host_origin'}
                         />
                         <FacebookLogin cssClass="g-login p-3 pr-5 bg-white text-secondary w-100 font-weight-light"
-                            appId="984455555809462"
+                            appId="<FB_APP_ID>"
                             textButton="Signup"
                             fields="name,email,picture"
                             callback={responseFOAuthSignup}
@@ -242,7 +242,7 @@ const Register = () => {
                             
                             <InstagramEmbed
                                 url= 'https://www.instagram.com/metafomos'
-                                clientAccessToken="637258717349315|e15e7baaff0a432ad4acb78734ef3bfc"
+                                clientAccessToken="<YOUR_INSTA_APPID_|_SECRET>"
                                 maxWidth={320}
                                 hideCaption={false}
                                 containerTagName='div'
@@ -259,16 +259,16 @@ const Register = () => {
                         <div className="container p-5">
                             <h6 className="text-dark">Connect Us With Discord</h6>
                             {/* 
-                                IN BELLOW DISCORD WIDGET id=944198467440500757 IS FOR TESTING CREATE AND  REPLACE YOUR DISCORD SERVER ID HERE!
+                                IN BELLOW DISCORD WIDGET id= IS FOR TESTING CREATE AND  REPLACE YOUR DISCORD SERVER ID HERE!
                             */}
-                            <iframe id="follow-discord" src="https://discord.com/widget?id=944198467440500757&theme=dark" width="350" height="300" allowtransparency="true" frameBorder="0" sandbox="allow-top-navigation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" referrerPolicy="origin same-origin origin-when-cross-origin no-referrer-when-downgrade"></iframe>
+                            <iframe id="follow-discord" src="https://discord.com/widget?id=<YOUR_DISCORD_SERVER_ID>&theme=dark" width="350" height="300" allowtransparency="true" frameBorder="0" sandbox="allow-top-navigation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" referrerPolicy="origin same-origin origin-when-cross-origin no-referrer-when-downgrade"></iframe>
                         </div>
                     : null }
 
                     { followSocialMediaStep == 'JOIN_FACEBOOK' ? 
                         <div className="container p-5">
                             <h6 className="text-dark">Follow Us On Facebook Or Reddit To Continue</h6>
-                            <FacebookProvider appId="984455555809462">
+                            <FacebookProvider appId="<YOUR_APP_ID>">
                                 <Page href="https://www.facebook.com/metafomos" />
                             </FacebookProvider>
 
